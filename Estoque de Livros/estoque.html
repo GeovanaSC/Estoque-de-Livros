@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque de Livros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #219653;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .msg-vazio {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Sistema de Estoque de Livros</h2>
+    
+    <!-- Formulário de Cadastro -->
+    <div class="form-group">
+        <label for="titulo">Título do Livro:</label>
+        <input type="text" id="titulo" placeholder="Ex: O Pequeno Príncipe">
+    </div>
+    
+    <div class="form-group">
+        <label for="quantidade">Quantidade em Estoque:</label>
+        <input type="number" id="quantidade" placeholder="Ex: 5">
+    </div>
+    
+    <div class="form-group">
+        <label for="preco">Preço Unitário (R$):</label>
+        <input type="number" step="0.01" id="preco" placeholder="Ex: 49.90">
+    </div>
+    
+    <button onclick="adicionarLivro()">Cadastrar Livro</button>
+
+    <!-- Tabela de Listagem -->
+    <h3>Lista de Livros</h3>
+    <p id="avisoVazio" class="msg-vazio">Nenhum livro cadastrado no estoque ainda.</p>
+    
+    <table id="tabelaLivros" style="display: none;">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Qtd</th>
+                <th>Preço</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela">
+            <!-- Os livros cadastrados vão aparecer aqui dinamicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Lista para guardar os livros na memória do navegador
+    let estoque = [];
+    const limiteMaximo = 5;
+
+    function adicionarLivro() {
+        let titulo = document.getElementById('titulo').value;
+        let quantidade = document.getElementById('quantidade').value;
+        let preco = document.getElementById('preco').value;
+
+        // Validação básica para ver se os campos não estão vazios
+        if (titulo === "" || quantidade === "" || preco === "") {
+            alert("Por favor, preencha todos os campos!");
+            return;
+        }
+
+        // Verifica o limite de 5 livros (igual ao seu código em C)
+        if (estoque.length >= limiteMaximo) {
+            alert("Erro: O estoque está cheio (limite de 5 livros)!");
+            return;
+        }
+
+        // Adiciona o novo livro na lista
+        estoque.push({
+            titulo: titulo,
+            quantidade: parseInt(quantidade),
+            preco: parseFloat(preco)
+        });
+
+        // Limpa os campos após cadastrar
+        document.getElementById('titulo').value = "";
+        document.getElementById('quantidade').value = "";
+        document.getElementById('preco').value = "";
+
+        // Atualiza a tabela na tela
+        atualizarTabela();
+    }
+
+    function atualizarTabela() {
+        let corpoTabela = document.getElementById('corpoTabela');
+        let tabela = document.getElementById('tabelaLivros');
+        let avisoVazio = document.getElementById('avisoVazio');
+
+        corpoTabela.innerHTML = "";
+
+        if (estoque.length === 0) {
+            tabela.style.display = "none";
+            avisoVazio.style.display = "block";
+        } else {
+            tabela.style.display = "table";
+            avisoVazio.style.display = "none";
+
+            // Loop para preencher a tabela com os livros
+            for (let i = 0; i < estoque.length; i++) {
+                let linha = `<tr>
+                    <td>${estoque[i].titulo}</td>
+                    <td>${estoque[i].quantidade}</td>
+                    <td>R$ ${estoque[i].preco.toFixed(2)}</td>
+                </tr>`;
+                corpoTabela.innerHTML += linha;
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
